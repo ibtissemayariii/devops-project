@@ -1,20 +1,30 @@
 version: '3.8'
 
 services:
+  # --- Backend Service ---
   backend:
     build:
       context: .
       dockerfile: Dockerfile.backend
     ports:
       - "5000:5000"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - S3_ENDPOINT_URL=http://localstack:4566 # Ykallem LocalStack b-esmou f-west el network
+      - BUCKET_NAME=devops-project-bucket
+      - DATABASE_URL=postgresql://admin:admin@db:5432/appdb # Ykallem el DB b-esmha
     depends_on:
       - db
+      - localstack # Mayebdech el backend ela mayikounou hadhom 7adrin
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
+  # --- Frontend Service ---
   frontend:
     image: nginx
     volumes:
@@ -27,6 +37,7 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # --- Database Service (PostgreSQL) ---
   db:
     image: postgres:15
     environment:
@@ -41,13 +52,16 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # --- LocalStack (AWS Emulator) ---
   localstack:
     image: localstack/localstack
     ports:
       - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
-
