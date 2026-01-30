@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>DevOps Cloud Project</h1>
+  <button onclick="load()">Call Backend</button>
+  <p id="res"></p>
+
+<script>
+function load() {
+  fetch("http://localhost:5000")
+    .then(r => r.json())
+    .then(d => document.getElementById("res").innerText = d.message);
+}
+</script>
+</body>
+</html>
