@@ -9,15 +9,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Terraform Init
-      run: terraform init
-      working-directory: terraform
+      # --- AGGIUNGI QUESTO PASSAGGIO QUI SOTTO ---
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0 # Puoi cambiare la versione se necessario
+      # -------------------------------------------
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve
-      working-directory: terraform
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
 
-    - name: Build & Run App
-      run: docker-compose up -d
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform
+
+      - name: Build & Run App
+        run: docker-compose up -d
